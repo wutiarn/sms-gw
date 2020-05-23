@@ -8,15 +8,18 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.wtrn.smsgw.configuration.properties.SmsGwProperties;
 import ru.wtrn.smsgw.exception.IncorrectSecretException;
 import ru.wtrn.smsgw.model.SmsMessage;
+import ru.wtrn.smsgw.service.TelegramNotificationsService;
 
 @RestController
 public class SmsHookController {
     private final Logger logger = LoggerFactory.getLogger(SmsHookController.class);
 
     final SmsGwProperties smsGwProperties;
+    final TelegramNotificationsService telegramNotificationsService;
 
-    public SmsHookController(SmsGwProperties smsGwProperties) {
+    public SmsHookController(SmsGwProperties smsGwProperties, TelegramNotificationsService telegramNotificationsService) {
         this.smsGwProperties = smsGwProperties;
+        this.telegramNotificationsService = telegramNotificationsService;
     }
 
     @RequestMapping("hooks/sms")
@@ -32,5 +35,9 @@ public class SmsHookController {
         if (!message.getSecret().equals(smsGwProperties.getHookSecret())) {
             throw new IncorrectSecretException();
         }
+
+        telegramNotificationsService.sendNotification(
+                message.getBody() + "\n---\n" + message.getFrom()
+        );
     }
 }
