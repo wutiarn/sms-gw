@@ -2,11 +2,9 @@ package ru.wtrn.smsgw.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import ru.wtrn.smsgw.configuration.properties.SmsGwProperties;
 import ru.wtrn.smsgw.exception.IncorrectSecretException;
 import ru.wtrn.smsgw.model.SmsMessage;
@@ -31,7 +29,7 @@ public class SmsHookController {
             throw e;
         }
 
-        if (!message.getSecret().equals(smsGwProperties.hookSecret)) {
+        if (!message.getSecret().equals(smsGwProperties.getHookSecret())) {
             throw new IncorrectSecretException();
         }
     }
